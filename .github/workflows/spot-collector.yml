@@ -3,7 +3,8 @@ name: NTL Spot Collector (Public Auto 5m - Staging)
 on:
   workflow_dispatch:
   schedule:
-    # UTC: every five minutes, offset to avoid busy top-of-hour.
+    # UTC: minutes 02, 07, 12, ... 57 every hour; GitHub schedule is best effort.
+    # Resync scheduled event registration on default branch after GitHub incident.
     - cron: "2-59/5 * * * *"
 
 permissions:
