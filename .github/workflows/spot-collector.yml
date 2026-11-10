@@ -1,7 +1,10 @@
-name: NTL Spot Collector (Public Staging)
+name: NTL Spot Collector (Public Auto 5m - Staging)
 
 on:
   workflow_dispatch:
+  schedule:
+    # UTC: every five minutes, offset to avoid busy top-of-hour.
+    - cron: "2-59/5 * * * *"
 
 permissions:
   contents: read
