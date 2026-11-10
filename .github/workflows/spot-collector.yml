@@ -1,0 +1,38 @@
+name: NTL Spot Collector (Public Staging)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ntl-spot-staging
+  cancel-in-progress: true
+
+jobs:
+  collect-spot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout audited source
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Run offline validation tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Verify staging secrets are configured
+        env:
+          NTL_INGEST_URL: ${{ secrets.NTL_INGEST_URL }}
+          NTL_INGEST_TOKEN: ${{ secrets.NTL_INGEST_TOKEN }}
+        shell: bash
+        run: |
+          if [ -z "$NTL_INGEST_URL" ] || [ -z "$NTL_INGEST_TOKEN" ]; then
+            echo "::error::Configure NTL_INGEST_URL and NTL_INGEST_TOKEN in this repository first."
+            exit 1
+          fi
+      - name: Fetch 4 Binance Spot tickers and submit to Cloudflare staging
+        env:
+          NTL_INGEST_URL: ${{ secrets.NTL_INGEST_URL }}
+          NTL_INGEST_TOKEN: ${{ secrets.NTL_INGEST_TOKEN }}
+        run: python3 collector.py
