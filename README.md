@@ -6,7 +6,7 @@ Public **code only**, for a no-cost GitHub Actions-hosted Binance Spot read-only
 
 - Read-only Binance public Spot 24h ticker endpoint for BTCUSDT, ETHUSDT, SOLUSDT and BNBUSDT
 - Four-symbol normalization, freshness validation, and 9 offline Python tests
-- Manual GitHub Actions workflow; **no automatic schedule until staging secrets and end-to-end testing pass**
+- GitHub Actions workflow with manual trigger and an automatic **5-minute** schedule, enabled after a successful staging ingest test on 10 Nov 2026
 - Secure HTTPS POST with a long shared Bearer secret to a separate Cloudflare staging Worker
 - No Futures API requests, orders, wallets, Binance trading API keys, Cloudflare production writes, or secrets committed in source
 - Fail-closed on incomplete or stale samples
@@ -36,7 +36,7 @@ Check staging `/health` within 10 minutes of a successful run: `status: READY`, 
 
 ## Future five-minute schedule
 
-After smoke test succeeds, remove the earlier private repository's 30-minute schedule **before** adding `schedule: cron: "7,12,17,22,27,32,37,42,47,52,57,2 * * * *"` or `*/5 * * * *` to this workflow. Scheduled GitHub Actions are best-effort and may be delayed or dropped. Public standard runners are included at no charge, subject to GitHub policies and service availability; Cloudflare Free quota is account-wide, and frequent calls may be restricted by Binance.
+Enabled: `cron: "2-59/5 * * * *"`, i.e. UTC minute 02, 07, 12, ... 57 every hour. The earlier private repository's 30-minute schedule was removed before this change; it remains manual only. Scheduled GitHub Actions are best-effort and may be delayed or dropped. Public standard runners are included at no charge, subject to GitHub policies and service availability; Cloudflare Free quota is account-wide, and frequent calls may be restricted by Binance. The scheduling itself must be verified by observing a GitHub run with event type `schedule`.
 
 Public repository visibility is permanent for existing content/history even if later changed; no secrets or personally sensitive data should be committed.
 
